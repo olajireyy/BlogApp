@@ -1,0 +1,22 @@
+﻿@model BlogApp.Models.Post
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="post-detail">
+    <a asp-action="Index" class="back-link">All posts</a>
+    <p class="post-detail-label">Essay</p>
+    <h1>@Model.Title</h1>
+    <p class="byline">@Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+    <p class="body">@Model.Content</p>
+
+    <div class="mt-5 d-flex gap-3 align-items-center">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-ghost">Edit</a>
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-danger-ghost"
+                    onclick="return confirm('Delete this post?')">
+                Delete
+            </button>
+        </form>
+    </div>
+</div>

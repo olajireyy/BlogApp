@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="hero">
+    <p class="hero-label">Est. @DateTime.Now.Year</p>
+    <h1>Words worth <em>reading</em></h1>
+    <p>A place for writing. No noise, no clutter — just posts.</p>
+    <a asp-controller="Posts" asp-action="Index" class="btn btn-primary">
+        Read the blog
+    </a>
+</div>
