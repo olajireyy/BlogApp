@@ -25,15 +25,32 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Posts" asp-action="Index">
-                            Writing
-                        </a>
+                        <a class="nav-link" asp-controller="Posts" asp-action="Index">Writing</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Posts" asp-action="Create">
-                            New Post
-                        </a>
-                    </li>
+
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Posts" asp-action="Create">New Post</a>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="nav-link btn btn-link"
+                                        style="background:none;border:none;">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

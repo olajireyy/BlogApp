@@ -1,4 +1,5 @@
-﻿using BlogApp.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using BlogApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApp.Controllers
@@ -12,19 +13,35 @@ namespace BlogApp.Controllers
         {
             _db = db;
         }
-        public IActionResult Index() //function definition
+
+        //public - anybody can read
+        public IActionResult Index()
         {
             var posts = _db.Posts.ToList(); //list all posts objects
             return View(posts); //to return posts page (view) automatically
         }
+        public IActionResult Details(int id)
+        {
+            var post = _db.Posts.FirstOrDefault(p => p.Id == id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return View(post);
+        }
 
         // GET /Posts/Create — shows the empty form
+        // Protected - must be logged in
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST /Posts/Create — receives and saves the form data
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Post post)
@@ -40,18 +57,7 @@ namespace BlogApp.Controllers
             return View(post); // validation failed — re-show form with errors
         }
 
-        public IActionResult Details(int id)
-        {
-            var post = _db.Posts.FirstOrDefault(p => p.Id == id);
-
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return View(post);
-        }
-
+        [Authorize]
         public IActionResult Edit(int id, Post post)
         {
             if (ModelState.IsValid)
@@ -70,6 +76,7 @@ namespace BlogApp.Controllers
             return View(post);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)

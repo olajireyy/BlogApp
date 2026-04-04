@@ -1,4 +1,5 @@
 using BlogApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/Login";
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -47,7 +54,7 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated(); // ← creates tables if blog.db doesn't exist
+    db.Database.Migrate();
     if (!db.Posts.Any())
     {
         db.Posts.AddRange(
@@ -55,6 +62,35 @@ using (var scope = app.Services.CreateScope())
             new Post { Title = "Built from scratch", Content = "No scaffolding. Just clean MVC." }
         );
         db.SaveChanges();
+    }
+}
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    // Create Admin role if it doesn't exist
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+
+    // Create a default admin account if it doesn't exist
+    var adminEmail = "admin@blog.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        adminUser = new IdentityUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail
+        };
+
+        await userManager.CreateAsync(adminUser, "admin123");
+        await userManager.AddToRoleAsync(adminUser, "Admin");
     }
 }
 

@@ -1,0 +1,45 @@
+﻿@model BlogApp.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="form-page">
+    <h1>Welcome back</h1>
+
+    <form asp-action="Login" method="post">
+        <div class="mb-4">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" placeholder="Password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <div class="form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label"
+                       style="font-size:0.8rem;color:var(--text-muted)">
+                    Remember me
+                </label>
+            </div>
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="d-flex gap-3 align-items-center">
+            <button type="submit" class="btn btn-primary">Login</button>
+            <a asp-action="Register" class="btn btn-ghost">Create an account</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

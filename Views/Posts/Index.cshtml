@@ -34,10 +34,24 @@ else
                     @post.CreatedAt.ToString("MMMM dd, yyyy")
                 </span>
             </div>
-            <div class="post-card-actions">
-                <a asp-action="Edit" asp-route-id="@post.Id"
-                   class="btn btn-ghost btn-sm">Edit</a>
-            </div>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="post-card-actions">
+                    <a asp-action="Edit" asp-route-id="@post.Id"
+                       class="btn btn-ghost btn-sm">Edit</a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form asp-action="Delete" asp-route-id="@post.Id" method="post"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-danger-ghost btn-sm"
+                                    onclick="return confirm('Delete?')">
+                                Delete
+                            </button>
+                        </form>
+                    }
+                </div>
+            }
         </div>
     }
 }
