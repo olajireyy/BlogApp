@@ -65,30 +65,20 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-    // Create Admin role if it doesn't exist
     if (!await roleManager.RoleExistsAsync("Admin"))
-    {
         await roleManager.CreateAsync(new IdentityRole("Admin"));
-    }
 
-    // Create a default admin account if it doesn't exist
     var adminEmail = "admin@blog.com";
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
     if (adminUser == null)
     {
-        adminUser = new IdentityUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail
-        };
-
+        adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
         await userManager.CreateAsync(adminUser, "admin123");
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }
