@@ -9,6 +9,19 @@ var dbPath = Path.Combine(Environment.GetFolderPath(
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    // Relax password rules for testing — tighten for production
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -24,6 +37,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
